@@ -33,19 +33,7 @@ Qr = diag([10,0,1,0,0]); %Weight Matrix for x
 Rr = 1; %Weight for the input variable
 K = lqr(A, B, Qr, Rr); %Calculate feedback gain
 %----------------------------------------------------------------------
-% Simulate controller
-x0=[0.1 0 0 0 0]';
-%D=[0 0 0 0 0]';
-T=2; % Time duration of the simulation
-sim('statefdbk',T);
-gg=plot(t,x);
-set(gg,'LineWidth',1.5)
-gg=xlabel('Time (s9');
-set(gg,'Fontsize',14);
-gg=ylabel('\beta (rad)');
-set(gg,'Fontsize',14);
-%----------------------------------------------------------------------
-% End of file
+
 
 %EXE7
 G = eye(size(A)); %Gain of the process noise
@@ -58,6 +46,26 @@ A1=A-B*K-L*C;
 B1=L;
 C1=-K;
 
+% Simulate controller
+x0=[0.1 0 0 0 0]';
+%D=[[0];[0]];
+%C= eye(5);
+
+%C2 = eye(2, 5);
+D2 = [0 0];
+
+T=20; % Time duration of the simulation
+
+sim('statefdbk_2015',T);
+gg=plot(y);
+set(gg,'LineWidth',1.5)
+gg=xlabel('Time (s)');
+set(gg,'Fontsize',14);
+gg=ylabel('\beta (rad)');
+set(gg,'Fontsize',14);
+legend('x1','x3');
+%----------------------------------------------------------------------
+% End of file
 
 
 
