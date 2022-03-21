@@ -29,11 +29,9 @@ eigen_closed=eig(A-B*K);
 
 
 minScore = 10^9;
-minAlpha = minScore;
-minBeta = minScore;
-for valuesQr1 = logspace(-3,4)
-    for valuesQr3 = logspace(-3,4)
-        for valuesRr = logspace(-3,4)
+for valuesQr1 = logspace(10^-3,10^4)
+    for valuesQr3 = logspace(10^-3,10^4)
+        for valuesRr = logspace(10^-3,10^4)
             %EXE6
             % Furuta pendulum - State feedback test
             %______________________________________________________________________
@@ -81,13 +79,6 @@ for valuesQr1 = logspace(-3,4)
                minAlpha = erro_alpha;
                valuesAlpha = [valuesQr1, valuesQr3, valuesRr];
             end
-            
-            
-            if erro_beta < minBeta
-               minBeta = erro_beta;
-               valuesBeta = [valuesQr1, valuesQr3, valuesRr];
-            end
-            
         end
     end
 end
