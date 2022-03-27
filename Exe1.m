@@ -31,69 +31,43 @@ eigen_closed=eig(A-B*K);
 minScore = 10^9;
 minAlpha = minScore;
 minBeta = minScore;
-for valuesQr1 = logspace(-3,4)
-    for valuesQr3 = logspace(-3,4)
-        for valuesRr = logspace(-3,4)
-            %EXE6
-            % Furuta pendulum - State feedback test
-            %______________________________________________________________________
-            Qr = diag([valuesQr1,0,valuesQr3,0,0]); %Weight Matrix for x
-            Rr = valuesRr; %Weight for the input variable
-            K = lqr(A, B, Qr, Rr); %Calculate feedback gain
-            %----------------------------------------------------------------------
+
+%EXE6
+% Furuta pendulum - State feedback test
+%______________________________________________________________________
+Qr = diag([10000,0, 1*exp(-3) ,0,0]); %Weight Matrix for x
+Rr = 1*exp(-3); %Weight for the input variable
+K = lqr(A, B, Qr, Rr); %Calculate feedback gain
+%----------------------------------------------------------------------
+        
+        
+%EXE7
+G = eye(size(A)); %Gain of the process noise
+Qe = eye(size(A))*26.827; %Variance of process errors
+Re = eye(2)*1.9307; %Variance of measurement errors
+L = lqe(A, G, C, Qe, Re); %Calculate estimator gains
+       
+%EXE8
+A1=A-B*K-L*C;
+B1=L;
+C1=-K;
+        
+% Simulate controller
+x0=[0.1 0 0 0 0]';
+%D=[[0];[0]];
+%C= eye(5);
+        
+%C2 = eye(2, 5);
+D2 = [0 0];
+        
+T=10; % Time duration of the simulation     
+        
+sim('statefdbk_2015',T);
+        
+
+fprintf("ACABEI\N");
 
 
-            %EXE7
-            G = eye(size(A)); %Gain of the process noise
-            Qe = eye(size(A))*10; %Variance of process errors
-            Re = eye(2); %Variance of measurement errors
-            L = lqe(A, G, C, Qe, Re); %Calculate estimator gains
-
-            %EXE8
-            A1=A-B*K-L*C;
-            B1=L;
-            C1=-K;
-
-            % Simulate controller
-            x0=[0.1 0 0 0 0]';
-            %D=[[0];[0]];
-            %C= eye(5);
-
-            %C2 = eye(2, 5);
-            D2 = [0 0];
-
-            T=10; % Time duration of the simulation
-
-
-            sim('statefdbk_2015',T);
-            %Score
-            erro_alpha = rms(y.Data(:,1));
-            erro_beta = rms(y.Data(:,2));
-
-            score = erro_alpha + 20*erro_beta;
-            
-            if score < minScore
-               minScore = score;
-               values = [valuesQr1, valuesQr3, valuesRr];
-            end
-            
-            if erro_alpha < minAlpha
-               minAlpha = erro_alpha;
-               valuesAlpha = [valuesQr1, valuesQr3, valuesRr];
-            end
-            
-            
-            if erro_beta < minBeta
-               minBeta = erro_beta;
-               valuesBeta = [valuesQr1, valuesQr3, valuesRr];
-            end
-            
-        end
-    end
-end
-
-
-%{
 figure();
 gg=plot(y);
 set(gg,'LineWidth',1.5)
@@ -106,13 +80,3 @@ figure();
 plot(u);
 %----------------------------------------------------------------------
 % End of file
-%}
-
-
-
-
-
-
-
-
-
