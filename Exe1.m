@@ -32,51 +32,85 @@ minScore = 10^9;
 minAlpha = minScore;
 minBeta = minScore;
 
-%EXE6
-% Furuta pendulum - State feedback test
-%______________________________________________________________________
-Qr = diag([10000,0, 1*exp(-3) ,0,0]); %Weight Matrix for x
-Rr = 1*exp(-3); %Weight for the input variable
-K = lqr(A, B, Qr, Rr); %Calculate feedback gain
-%----------------------------------------------------------------------
-        
-        
-%EXE7
-G = eye(size(A)); %Gain of the process noise
-Qe = eye(size(A))*26.827; %Variance of process errors
-Re = eye(2)*1.9307; %Variance of measurement errors
-L = lqe(A, G, C, Qe, Re); %Calculate estimator gains
-       
-%EXE8
-A1=A-B*K-L*C;
-B1=L;
-C1=-K;
-        
-% Simulate controller
-x0=[0.1 0 0 0 0]';
-%D=[[0];[0]];
-%C= eye(5);
-        
-%C2 = eye(2, 5);
-D2 = [0 0];
-        
-T=10; % Time duration of the simulation     
-        
-sim('statefdbk_2015',T);
-        
-
-fprintf("ACABEI\N");
+%Values
+valuesQr1 = [1,3,5,7,9,10];
+valuesQr3 = 1;
+valuesRr = 1;
+for i = 1:length(valuesQr1)
+    %EXE6
+    % Furuta pendulum - State feedback test
+    %______________________________________________________________________
+    Qr = diag([valuesQr1(i),0,valuesQr3,0,0]); %Weight Matrix for x
+    Rr = valuesRr; %Weight for the input variable
+    K = lqr(A, B, Qr, Rr); %Calculate feedback gain
+    %----------------------------------------------------------------------
 
 
-figure();
-gg=plot(y);
-set(gg,'LineWidth',1.5)
-gg=xlabel('Time (s)');
-set(gg,'Fontsize',14);
-gg=ylabel('\beta (rad)');
-set(gg,'Fontsize',14);
-legend('alpha','beta');
-figure();
-plot(u);
+    %EXE7
+    G = eye(size(A)); %Gain of the process noise
+    Qe = eye(size(A))*10; %Variance of process errors
+    Re = eye(2); %Variance of measurement errors
+    L = lqe(A, G, C, Qe, Re); %Calculate estimator gains
+
+    %EXE8
+    A1=A-B*K-L*C;
+    B1=L;
+    C1=-K;
+
+    % Simulate controller
+    x0=[0.1 0 0 0 0]';
+    %D=[[0];[0]];
+    %C= eye(5);
+
+    %C2 = eye(2, 5);
+    D2 = [0 0];
+
+    T=10; % Time duration of the simulation
+
+
+    sim('statefdbk_2015',T);
+    %Score
+    erro_alpha = rms(y.Data(:,1));
+    erro_beta = rms(y.Data(:,2));
+
+    score = erro_alpha + 20*erro_beta;
+
+
+    figure(1);
+    hold on;
+    p = plot(y);
+    set(p,'LineWidth',1.5)
+    p=xlabel('Time (s)');
+    set(p,'Fontsize',14);
+    p=ylabel('\beta (rad)');
+    set(p,'Fontsize',14);
+    legend(string(valuesQr1(i)));
+    figure(2);
+    hold on;
+    plot(u);
+    legend(string(valuesQr1(i)));
+    pause(5)
+end
+
 %----------------------------------------------------------------------
 % End of file
+%}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
